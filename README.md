@@ -4,11 +4,23 @@
 
 # Audi MHI2 P0916 全屏倒车影像 · M.I.B. 补丁
 
-适用于 **MHI2_CN_AU37x_P0916** 的全屏倒车影像补丁，通过 **M.I.B. 3.7.3** 的 Custom Script 安装，保留右侧车辆与雷达显示。
+适用于 **MHI2_CN_AU37x_P0916** 的全屏倒车影像补丁，通过 **M.I.B. 3.7.3** 的 Custom Script 安装，保留原车车辆与雷达相关界面资源。可视雷达显示效果未验证，详见下方测试说明。
 
 **当前版本：v1.2。2026-10-16，测试车主反馈本版显示正常。** 目前只有一台车的实车反馈，不代表所有同版本设备均兼容；脚本还会逐项检查资源哈希。其他固件与 M.I.B. 版本不在本包支持范围内。
 
 基于 [mrfixpl/Audi-MHI2-RVC-fullscreen](https://github.com/mrfixpl/Audi-MHI2-RVC-fullscreen) 的 AU37x 修改方案，加入国行 P0916 资源适配、M.I.B. 安装入口、校验、备份和恢复流程。原项目要求非商业用途，详见 [来源与使用说明](NOTICE.md)。
+
+## 安装前后对比
+
+> **测试说明：测试车辆只有后雷达，没有前雷达，无法测试可视雷达显示效果。以下图片仅展示倒车影像布局及车辆图层的变化，仅供参考，不代表可视雷达功能已验证。**
+
+### 图片 1：原厂效果
+
+![图片 1：原厂倒车影像，左侧为视频，右侧为车辆图层](docs/images/before-stock.jpg)
+
+### 图片 2：安装后效果
+
+![图片 2：安装 v1.2 后的全屏倒车影像，保留右侧车辆图层](docs/images/after-v1.2.jpg)
 
 ## 下载与安装
 
@@ -117,11 +129,23 @@ python tools/build_release.py
 
 # Audi MHI2 P0916 Fullscreen Rear-View Camera · M.I.B. Patch
 
-A fullscreen rear-view camera patch for **MHI2_CN_AU37x_P0916**, installed through the Custom Script menu in **M.I.B. 3.7.3**, with the vehicle graphic and parking sensor display retained on the right.
+A fullscreen rear-view camera patch for **MHI2_CN_AU37x_P0916**, installed through the Custom Script menu in **M.I.B. 3.7.3**, retaining the stock vehicle and parking sensor interface resources. The visual parking sensor display has not been verified; see the testing note below.
 
 **Current version: v1.2. On 2026-10-16, the test vehicle's owner reported that this version worked normally.** This is feedback from one vehicle, not a compatibility guarantee for every unit running the same firmware. The installer also checks individual resource hashes. Other firmware and M.I.B. versions are outside this package's supported scope.
 
 Based on the AU37x modifications in [mrfixpl/Audi-MHI2-RVC-fullscreen](https://github.com/mrfixpl/Audi-MHI2-RVC-fullscreen), with adaptation for Chinese-market P0916 resources, a M.I.B. installer, verification, backups and restoration. The upstream project specifies non-commercial use; see [Attribution and usage notice](NOTICE.md#english).
+
+## Before and after installation
+
+> **Testing note: The test vehicle has rear parking sensors only, with no front parking sensors. We could not test the visual parking sensor display. The photos below show changes to the camera layout and vehicle graphic only and are provided for reference; they do not establish that the visual parking sensor display works.**
+
+### Image 1: Factory appearance
+
+![Image 1: Factory rear-view camera layout, with video on the left and the vehicle graphic on the right](docs/images/before-stock.jpg)
+
+### Image 2: After installation
+
+![Image 2: Fullscreen rear-view camera after installing v1.2, with the right-side vehicle graphic retained](docs/images/after-v1.2.jpg)
 
 ## Download and installation
 
