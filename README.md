@@ -111,12 +111,6 @@ python tools/build_release.py
 
 本仓库只包含安装所需资源、脚本与文档；不包含整机备份、VIN、密码文件、FEC 或运行日志。反馈问题前请自行遮蔽个人信息。
 
-## GitHub 发布
-
-把本目录内的文件放到你的 GitHub 仓库根目录；若合入已有项目，也可保留独立子目录。不要上传开发工作目录、SD 卡整盘或整机备份。
-
-创建 `v1.2` Release，附件选择构建出的安装 ZIP 和同名 `.sha256.txt`，发布说明可使用 [RELEASE_NOTES.md](RELEASE_NOTES.md)。不要把“GitHub 源码整理包”作为推荐安装包。
-
 ## 致谢
 
 - [mrfixpl / Audi-MHI2-RVC-fullscreen](https://github.com/mrfixpl/Audi-MHI2-RVC-fullscreen)：原始全屏方案及 AU37x 资源修改。
@@ -235,12 +229,6 @@ python tools/build_release.py
 The installation ZIP and its SHA-256 file are generated in `dist/`. Building does not modify the installer or resources. SHA-1 matches existing head-unit files; SHA-256 checks downloads. Checksums do not replace trust in the release source.
 
 This repository contains only the required installation resources, scripts and documentation. It excludes full head-unit backups, VINs, password files, FEC data and runtime logs. Redact personal information before reporting issues.
-
-## Publishing on GitHub
-
-Place this directory's contents at the root of your GitHub repository, or keep them in a separate subdirectory when adding them to an existing project. Do not upload the development workspace, an entire SD card or a full head-unit backup.
-
-Create a `v1.2` Release and attach the generated installation ZIP and corresponding `.sha256.txt`. Use [RELEASE_NOTES.md](RELEASE_NOTES.md#english) for the release description. Recommend the installation ZIP rather than the GitHub source preparation archive to end users.
 
 ## Credits
 
