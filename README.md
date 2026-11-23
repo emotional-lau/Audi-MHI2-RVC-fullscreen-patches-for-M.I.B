@@ -2,236 +2,231 @@
 
 <a id="zh-cn"></a>
 
-# Audi MHI2 P0916 全屏倒车影像 · M.I.B. 补丁
+# Audi MHI2 (P0916) 全屏倒车影像补丁 · M.I.B. 一键安装包
 
-适用于 **MHI2_CN_AU37x_P0916** 的全屏倒车影像补丁，通过 **M.I.B. 3.7.3** 的 Custom Script 安装，保留原车车辆与雷达相关界面资源。可视雷达显示效果未验证，详见下方测试说明。
+基于 [mrfixpl/Audi-MHI2-RVC-fullscreen](https://github.com/mrfixpl/Audi-MHI2-RVC-fullscreen) 的 AU37x 方案，针对国行 **MHI2_CN_AU37x_P0916** 固件制作的 **M.I.B. 3.7.3** 自定义脚本安装包。
 
-**当前版本：v1.2。2026-10-16，测试车主反馈本版显示正常。** 目前只有一台车的实车反馈，不代表所有同版本设备均兼容；脚本还会逐项检查资源哈希。其他固件与 M.I.B. 版本不在本包支持范围内。
+原厂倒车影像只占屏幕左侧，右侧是一块不透明的驻车雷达背景板。打上补丁后，摄像头画面会铺满整个屏幕，同时保留右侧半透明的车身图层与按键。
 
-基于 [mrfixpl/Audi-MHI2-RVC-fullscreen](https://github.com/mrfixpl/Audi-MHI2-RVC-fullscreen) 的 AU37x 修改方案，加入国行 P0916 资源适配、M.I.B. 安装入口、校验、备份和恢复流程。原项目要求非商业用途，详见 [来源与使用说明](NOTICE.md)。
+> **实车测试情况（v1.2）**
+> - 已在国行 `MHI2_CN_AU37x_P0916` 实车验证通过，倒车画面全屏与右侧车身图层显示正常。
+> - 注：测试车仅原厂后雷达（无前雷达/无可视 OPS 扇区），因此可视雷达扇区动画尚未在带可视雷达的车上实测。如你的车带有可视雷达，欢迎反馈效果。
 
-## 安装前后对比
+---
 
-> **测试说明：测试车辆只有后雷达，没有前雷达，无法测试可视雷达显示效果。以下图片仅展示倒车影像布局及车辆图层的变化，仅供参考，不代表可视雷达功能已验证。**
+## 效果对比
 
-### 图片 1：原厂效果
+| 原厂默认（左侧小画面） | 安装 v1.2 后（全屏画面 + 右侧车身图层） |
+| :---: | :---: |
+| ![原厂效果](docs/images/before-stock.jpg) | ![安装后效果](docs/images/after-v1.2.jpg) |
 
-![图片 1：原厂倒车影像，左侧为视频，右侧为车辆图层](docs/images/before-stock.jpg)
+---
 
-### 图片 2：安装后效果
+## 安装步骤
 
-![图片 2：安装 v1.2 后的全屏倒车影像，保留右侧车辆图层](docs/images/after-v1.2.jpg)
+### 1. 准备工作
+- 车机固件版本必须是 **`MHI2_CN_AU37x_P0916`**（脚本内置了版本与文件 SHA-1 校验，其他固件版本会自动拦截退出，不会强刷）。
+- 准备一张已经做好 **M.I.B. 3.7.3** 的 SD 卡（本仓库只提供补丁脚本，不包含 M.I.B. 本体）。
 
-## 下载与安装
+### 2. 拷贝补丁到 SD 卡
+去 [Releases](../../releases) 下载最新的 `Audi-MHI2-P0916-RVC-MIB-v1.2.zip`（或者直接下载仓库源码），解压后把 `SD_ROOT` 里面的 **`mod` 文件夹**复制到 SD 卡根目录。
 
-优先下载 Releases 中的 `Audi-MHI2-P0916-RVC-MIB-v1.2.zip`。使用 GitHub 的 Download ZIP 也可以，解压后找到 `SD_ROOT`。
-
-1. 准备已能正常运行的 M.I.B. 3.7.3 SD 卡，安装前保留自己的车机备份。
-2. 将 `SD_ROOT` 内的**整个 `mod` 文件夹**合并到 SD 卡根目录，覆盖本补丁的同名文件。若已有其他用途的 `mod/custom.sh`，先另存它。
-3. 确认 `mod/rvc_p0916/ACTION.txt` 第一行为 `INSTALL`（发布包默认值）。不能只复制 `custom.sh`。
-4. 插卡，打开 `M.I.B. → Advanced Settings → Run Custom Script`，执行 SD 卡上的 `/mod/custom.sh`。
-5. 开头应显示 `installer v1.2 radar recovery`。出现 **`INSTALL COMPLETE`** 后再手动重启 MMI；执行期间保持供电，不拔卡或重启。
-6. 重启后在车辆停稳状态下检查倒车画面和右侧雷达显示。
-
-SD 卡目录应为：
+复制好后的 SD 卡目录结构如下（注意不要把 `SD_ROOT` 这一层目录本身考进去）：
 
 ```text
-SD卡根目录/
-├── apps/                         # 现有 M.I.B. 文件
-├── VERSION                       # 现有 M.I.B. 文件
+SD 卡根目录/
+├── apps/                         # M.I.B. 原有目录
+├── VERSION                       # M.I.B. 原有文件
 └── mod/
-    ├── custom.sh
+    ├── custom.sh                 # 补丁入口脚本
     └── rvc_p0916/
-        ├── ACTION.txt
-        ├── manifest.txt
-        ├── originals/
-        └── patched/
+        ├── ACTION.txt            # 默认内容为 INSTALL
+        ├── manifest.txt          # 20 个资源文件的 SHA-1 清单
+        ├── originals/            # P0916 原厂基准文件
+        └── patched/              # v1.2 修改后的文件
 ```
 
-不要把 `SD_ROOT` 本身放到卡根目录后就直接运行。脚本使用 M.I.B. 自带的 `apps/sbin/sha1sum`，本仓库不包含完整 M.I.B.。
+*(如果你卡里原本就有其他用途的 `mod/custom.sh`，请先自己改名备份。)*
 
-## 检查、安装与恢复
+### 3. 上车刷入
+1. 把 SD 卡插入车机，进入绿菜单：`M.I.B. → Advanced Settings → Run Custom Script`，运行 `/mod/custom.sh`。
+2. 屏幕开头会打印 `installer v1.2 radar recovery`。脚本会自动校验车机文件、把修改前的原车文件备份到 SD 卡，然后写入补丁。
+3. 看到屏幕出现 **`INSTALL COMPLETE`** 后，手动重启 MMI 即可生效（执行过程中保持通电，不要中途拔卡或断电）。
 
-编辑 `mod/rvc_p0916/ACTION.txt`，第一行填写下列一个大写动作，再执行同一个菜单：
+---
 
-| 动作 | 行为 |
-| --- | --- |
-| `CHECK` | 验证环境、包内容与当前资源，不修改车机资源文件。 |
-| `INSTALL` | 安装 v1.2；支持从本项目已知的原始资源及 v1.0/v1.1 状态升级，无需先卸载。 |
-| `RESTORE` | 将 20 个目标文件恢复为包内 P0916 基准原始资源，包括原来的视频布局。 |
+## 状态检查与恢复原厂
 
-`RESTORE` 不是从最新 `run-N` 自动选择快照。写入异常时，脚本另外会尝试用当次备份回退到操作前状态。
+如需只做检查或恢复原厂，用文本编辑器打开 SD 卡上的 `mod/rvc_p0916/ACTION.txt`，把第一行改成对应指令，再进绿菜单跑一次 `Run Custom Script` 即可：
 
-出现 `RESTORE COMPLETE` 后手动重启。`ALREADY INSTALLED` / `ALREADY ORIGINAL` 表示已经处于相应状态，没有重复写入。菜单外层的 `execution finished` 不代表本脚本成功，应查看本脚本的 `COMPLETE`、`ALREADY ...` 或 `ERROR`。
+| `ACTION.txt` 内容 | 作用 |
+| :--- | :--- |
+| `INSTALL` | **安装补丁**（默认值）。支持从原厂状态直接安装，也支持从旧版 v1.0 / v1.1 直接覆盖升级。 |
+| `CHECK` | **仅做预检**。校验车机版本、SD 卡安装包和车机当前资源哈希，不改动任何文件。 |
+| `RESTORE` | **恢复原厂**。把涉及的 20 个文件全部还原回 P0916 原厂状态（看到 `RESTORE COMPLETE` 后重启 MMI）。 |
 
-每次实际写入前，会把当时的 20 个资源备份并校验到：
+> **小提示**：绿菜单最外层固定会打印一句 `execution finished`，那只代表脚本跑完了；具体有没有成功，请看脚本自己输出的 `INSTALL COMPLETE`、`RESTORE COMPLETE`、`ALREADY INSTALLED` 或 `ERROR`。
+
+### 自动备份位置
+每次实际替换文件前，脚本都会先把车机当时的 20 个文件自动备份到 SD 卡：
 
 ```text
-SD卡/backup/RVC_P0916_FULLSCREEN/run-N/
-├── before/       # 操作前资源
-├── before.txt    # 操作前 SHA-1
-└── run.log
+SD 卡/backup/RVC_P0916_FULLSCREEN/run-N/
+├── before/       # 刷入前从车机提取的原始文件
+├── before.txt    # 刷入前各文件的 SHA-1 记录
+└── run.log       # 当次执行日志
 ```
 
-## v1.2 修改范围
+---
 
-相对于原始 P0916 资源，最终只保留三项修改：
+## v1.2 到底改了什么？
 
-| 文件 | 用途 |
-| --- | --- |
-| `displaymanager.json` | 视频 source 为 720×480，target 为 800×438。 |
-| `2100002.png` | 透明主背景。 |
-| `2100003.png` | 修改后的分隔线。 |
+只动了 UI 资源和显示布局配置，**不碰 IFS、EEPROM、FEC、车辆编码或 CarPlay**。相比 P0916 原厂资源，最终只改了 3 个文件：
 
-`2100137.png`、`2100145.png` 至 `2100156.png` 以及四个 `OPS_AU37*.kzb` 使用该 P0916 基准车机的原始资源，保留车辆、雷达和按钮图层。安装器处理全部 20 个文件，以便修正前版状态并支持恢复。v1.2 不修改 KZB 内部结构，不重新编码图片。
+| 文件名 | 修改内容 |
+| :--- | :--- |
+| `displaymanager.json` | 将倒车视频源设为 `720×480`，渲染目标区域放大至 `800×438` |
+| `2100002.png` | 右侧主背景替换为透明图层 |
+| `2100003.png` | 调整分割线图层 |
 
-本包只替换显示配置和界面资源，不写入 IFS、EEPROM、FEC、车辆编码或 CarPlay 文件。
+其余 17 个文件（`2100137.png`、`2100145.png`～`2100156.png` 以及 4 个 `OPS_AU37*.kzb`）均保持 P0916 原厂基准不动，确保车身、雷达和按钮图层不被破坏。之所以包里依然带着全部 20 个文件，是为了让刷过早期测试版（v1.0 / v1.1）的车友能一键修复，并且随时能用 `RESTORE` 完整还原。
 
-## 兼容性与故障处理
+详细版本变更见 [CHANGELOG.md](CHANGELOG.md)，离线测试记录见 [docs/VALIDATION.md](docs/VALIDATION.md)。
 
-- 固件必须是 `MHI2_CN_AU37x_P0916`，M.I.B. 必须为 3.7.3，资源内容还需匹配清单。不要删除版本或哈希保护来适配其他车机。
-- `Target differs from all known versions`：存在未知资源差异，脚本会停止。反馈软件版本、错误文本及相关资源哈希；不要直接发布完整备份。
-- 缺少 `sha1sum`：检查原有 M.I.B. 的 `apps/sbin/sha1sum` 是否完整。脚本不依赖 `cmp` 或 `rmdir`。
-- SD 写入错误：脚本会尝试重新挂载 SD 并实际检查写入；查看报错的具体命令，不能仅凭一条提示断定卡损坏。
-- 若显示异常，可执行 `RESTORE` 并重启。菜单无法进入时，不能依靠该菜单恢复。
-- 检测到替换错误时尝试恢复当次备份；断电或强制终止无法保证回退。跨 20 个文件的替换不是单一原子事务。
+---
 
-## 验证与维护
+## 常见问题
 
-[测试记录](docs/VALIDATION.md) 区分了八项离线模拟测试和车主的实车反馈。[更新记录](CHANGELOG.md) 说明各版本区别。
+- **提示 `Target differs from all known versions`**：说明你车机上的某个文件跟标准 P0916 哈希不一致（可能之前手工改过其他补丁）。脚本为了安全会直接中止，不会改动车机。提 Issue 时贴一下报错文本和对应文件的 SHA-1 即可（注意不要上传含 VIN 或个人信息的整机备份）。
+- **提示缺少 `sha1sum`**：脚本依赖 M.I.B. 自带的 `apps/sbin/sha1sum`，请检查 SD 卡上的 M.I.B. 3.7.3 文件是否完整。
 
-维护者可使用 Python 3.9+，无需第三方依赖：
+### 本地校验与打包（开发者）
+需 Python 3.9+（仅用标准库，无第三方依赖）：
 
 ```bash
-python tools/verify.py
-python tools/build_release.py
+python tools/verify.py         # 校验 manifest、脚本换行符与 43 个文件的哈希
+python tools/build_release.py  # 在 dist/ 下生成发布 ZIP 及 SHA-256 校验文件
 ```
 
-生成的安装 ZIP 和 SHA-256 位于 `dist/`。构建不修改安装脚本或资源。SHA-1 用于匹配已有车机文件，SHA-256 用于核验下载；校验值不能代替对发布来源的信任。
+---
 
-本仓库只包含安装所需资源、脚本与文档；不包含整机备份、VIN、密码文件、FEC 或运行日志。反馈问题前请自行遮蔽个人信息。
+## 致谢与声明
 
-## 致谢
+- **[mrfixpl / Audi-MHI2-RVC-fullscreen](https://github.com/mrfixpl/Audi-MHI2-RVC-fullscreen)**：原版全屏思路与 AU37x 资源修改方案。
+- **[M.I.B. (More Incredible Bash)](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash)**：Custom Script 运行环境。
+- **[MIB Helper Wiki](https://wiki.mib-helper.com/index.php?title=Audi_MHI2_RVC_fullscreen_patch)**：原版全屏补丁资料。
 
-- [mrfixpl / Audi-MHI2-RVC-fullscreen](https://github.com/mrfixpl/Audi-MHI2-RVC-fullscreen)：原始全屏方案及 AU37x 资源修改。
-- [M.I.B. / More Incredible Bash](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash)：Custom Script 执行环境与校验工具。
-- [MIB Helper Wiki](https://wiki.mib-helper.com/index.php?title=Audi_MHI2_RVC_fullscreen_patch)：原项目说明。
+本项目遵循上游要求，**仅供个人非商业免费使用**，详见 [NOTICE.md](NOTICE.md)。刷机有风险，操作前请自行保留车机备份。
 
 ---
 
 <a id="english"></a>
 
-# Audi MHI2 P0916 Fullscreen Rear-View Camera · M.I.B. Patch
+# Audi MHI2 (P0916) Fullscreen Rear-View Camera · M.I.B. Installer
 
-A fullscreen rear-view camera patch for **MHI2_CN_AU37x_P0916**, installed through the Custom Script menu in **M.I.B. 3.7.3**, retaining the stock vehicle and parking sensor interface resources. The visual parking sensor display has not been verified; see the testing note below.
+An automated **M.I.B. 3.7.3** Custom Script installer that enables fullscreen rear-view camera display on **MHI2_CN_AU37x_P0916**, based on the AU37x modification from [mrfixpl/Audi-MHI2-RVC-fullscreen](https://github.com/mrfixpl/Audi-MHI2-RVC-fullscreen).
 
-**Current version: v1.2. On 2026-10-16, the test vehicle's owner reported that this version worked normally.** This is feedback from one vehicle, not a compatibility guarantee for every unit running the same firmware. The installer also checks individual resource hashes. Other firmware and M.I.B. versions are outside this package's supported scope.
+By default, the stock rear-view camera stream only occupies the left portion of the screen, with an opaque panel on the right. This patch stretches the camera view to fullscreen (`800×438`) while keeping the transparent right-side car overlay and UI controls intact.
 
-Based on the AU37x modifications in [mrfixpl/Audi-MHI2-RVC-fullscreen](https://github.com/mrfixpl/Audi-MHI2-RVC-fullscreen), with adaptation for Chinese-market P0916 resources, a M.I.B. installer, verification, backups and restoration. The upstream project specifies non-commercial use; see [Attribution and usage notice](NOTICE.md#english).
+> **Vehicle testing status (v1.2)**
+> - Tested and confirmed working on a Chinese-market `MHI2_CN_AU37x_P0916` head unit.
+> - Note: The test vehicle only has rear acoustic parking sensors (no front sensors / no visual OPS graphic). If your car has visual OPS bars, feedback is welcome.
 
-## Before and after installation
+---
 
-> **Testing note: The test vehicle has rear parking sensors only, with no front parking sensors. We could not test the visual parking sensor display. The photos below show changes to the camera layout and vehicle graphic only and are provided for reference; they do not establish that the visual parking sensor display works.**
+## Before & After
 
-### Image 1: Factory appearance
+| Stock Layout | With v1.2 Patch |
+| :---: | :---: |
+| ![Stock layout](docs/images/before-stock.jpg) | ![Patched layout](docs/images/after-v1.2.jpg) |
 
-![Image 1: Factory rear-view camera layout, with video on the left and the vehicle graphic on the right](docs/images/before-stock.jpg)
+---
 
-### Image 2: After installation
+## Installation
 
-![Image 2: Fullscreen rear-view camera after installing v1.2, with the right-side vehicle graphic retained](docs/images/after-v1.2.jpg)
+### 1. Prerequisites
+- Head-unit firmware must be **`MHI2_CN_AU37x_P0916`** (the script verifies firmware and SHA-1 hashes before touching anything and aborts safely on mismatches).
+- A working **M.I.B. 3.7.3** SD card (this repository only contains the patch payload, not M.I.B. itself).
 
-## Download and installation
+### 2. Copy to SD Card
+Download `Audi-MHI2-P0916-RVC-MIB-v1.2.zip` from [Releases](../../releases) (or clone this repo), and copy the **`mod` folder** from `SD_ROOT` into the root of your M.I.B. SD card.
 
-Prefer `Audi-MHI2-P0916-RVC-MIB-v1.2.zip` from Releases. GitHub's Download ZIP also works: extract it and locate `SD_ROOT`.
-
-1. Prepare an SD card with a working M.I.B. 3.7.3 installation. Keep your own head-unit backup before installing.
-2. Merge the **entire `mod` folder** inside `SD_ROOT` into the SD card root, replacing files belonging to this patch. If you already use `mod/custom.sh` for something else, save a separate copy first.
-3. Confirm that the first line of `mod/rvc_p0916/ACTION.txt` is `INSTALL`, the release default. Copying only `custom.sh` is insufficient.
-4. Insert the card, open `M.I.B. → Advanced Settings → Run Custom Script`, and run `/mod/custom.sh` from the SD card.
-5. The opening banner should contain `installer v1.2 radar recovery`. Wait for **`INSTALL COMPLETE`**, then manually restart the MMI. Maintain power throughout execution; do not remove the card or restart early.
-6. After restarting, check the camera image and right-side parking sensor display while the vehicle is stationary.
-
-The SD card layout should be:
+Your SD card root should look like this (do not copy the `SD_ROOT` wrapper folder itself):
 
 ```text
 SD card root/
-├── apps/                         # Existing M.I.B. files
+├── apps/                         # Existing M.I.B. directory
 ├── VERSION                       # Existing M.I.B. file
 └── mod/
-    ├── custom.sh
+    ├── custom.sh                 # Entry script executed by M.I.B.
     └── rvc_p0916/
-        ├── ACTION.txt
-        ├── manifest.txt
-        ├── originals/
-        └── patched/
+        ├── ACTION.txt            # Defaults to INSTALL
+        ├── manifest.txt          # SHA-1 manifest for all 20 resources
+        ├── originals/            # Stock P0916 baseline files
+        └── patched/              # Patched v1.2 files
 ```
 
-Copy the contents of `SD_ROOT` into the card root, rather than placing the `SD_ROOT` folder itself there. The script uses `apps/sbin/sha1sum` from your existing M.I.B. installation. This repository does not include a complete M.I.B. installation.
+*(If you already have a `mod/custom.sh` on your card for another script, back it up first.)*
 
-## Check, install and restore
+### 3. Run on the Head Unit
+1. Insert the SD card and open `M.I.B. → Advanced Settings → Run Custom Script` to execute `/mod/custom.sh`.
+2. You should see `installer v1.2 radar recovery` at the top. The script verifies all hashes, backs up your current files to the SD card, and applies the patch.
+3. Wait for **`INSTALL COMPLETE`**, then manually reboot the MMI. Keep the ignition/power stable during execution.
 
-Edit the first line of `mod/rvc_p0916/ACTION.txt` to contain one of these uppercase actions, then run the same menu entry:
+---
 
-| Action | Behavior |
-| --- | --- |
-| `CHECK` | Verifies the environment, package and current resources without modifying head-unit resource files. |
-| `INSTALL` | Installs v1.2. Supports upgrades from this project's known stock resources and v1.0/v1.1 states without uninstalling first. |
-| `RESTORE` | Restores all 20 target files to the packaged P0916 stock baseline, including the original video layout. |
+## Check & Restore to Stock
 
-`RESTORE` uses the packaged stock baseline; it does not automatically select the latest `run-N` snapshot. Separately, if an update fails during file replacement, the script attempts to roll back using that run's backup.
+To run a dry-run check or revert to stock, open `mod/rvc_p0916/ACTION.txt` on the SD card, change the first line to one of the commands below, and run `Run Custom Script` again:
 
-Manually restart after `RESTORE COMPLETE`. `ALREADY INSTALLED` / `ALREADY ORIGINAL` means the requested state is already present, with no repeated writes. The surrounding menu's `execution finished` message does not establish installer success; check this script's own `COMPLETE`, `ALREADY ...` or `ERROR` messages.
+| `ACTION.txt` | Description |
+| :--- | :--- |
+| `INSTALL` | **Install patch** (default). Works on stock P0916 as well as earlier v1.0 / v1.1 states without uninstalling first. |
+| `CHECK` | **Dry-run check**. Verifies firmware, package integrity, and current head-unit file hashes without modifying anything. |
+| `RESTORE` | **Restore to stock**. Reverts all 20 target files back to the stock P0916 baseline (reboot MMI after `RESTORE COMPLETE`). |
 
-Before each actual update, the current 20 resources are backed up and verified at:
+> **Tip**: M.I.B.'s outer menu always prints `execution finished` when a script exits. Check the script's own status line (`INSTALL COMPLETE`, `RESTORE COMPLETE`, `ALREADY INSTALLED`, or `ERROR`) to confirm the actual result.
+
+### Automatic Backups
+Before modifying any file, the installer saves and verifies a snapshot of the 20 files currently on your head unit:
 
 ```text
 SD card/backup/RVC_P0916_FULLSCREEN/run-N/
-├── before/       # Resources before this run
-├── before.txt    # SHA-1 hashes before this run
-└── run.log
+├── before/       # Files backed up before this run
+├── before.txt    # SHA-1 checksums before this run
+└── run.log       # Execution log
 ```
 
-## Changes in v1.2
+---
 
-Compared with the P0916 stock baseline, only three modifications remain:
+## What v1.2 Changes
 
-| File | Purpose |
-| --- | --- |
-| `displaymanager.json` | Video source: 720×480; target: 800×438. |
-| `2100002.png` | Transparent main background. |
-| `2100003.png` | Modified divider. |
+This patch only touches display layout config and UI graphics—it does **not** touch IFS, EEPROM, FEC, coding, or CarPlay files. Compared to stock P0916, only 3 files are modified:
 
-`2100137.png`, `2100145.png` through `2100156.png`, and the four `OPS_AU37*.kzb` files use the original resources from the P0916 reference unit, retaining the vehicle, parking sensor and button layers. The installer handles all 20 files to correct earlier versions' states and support restoration. v1.2 does not alter internal KZB structures or re-encode images.
+| File | Modification |
+| :--- | :--- |
+| `displaymanager.json` | Sets video source to `720×480` and target viewport to `800×438` |
+| `2100002.png` | Replaces opaque background with a transparent layer |
+| `2100003.png` | Adjusts divider graphic |
 
-This package replaces display configuration and interface resources only. It does not write IFS, EEPROM, FEC, vehicle coding or CarPlay files.
+The remaining 17 files (`2100137.png`, `2100145.png`–`2100156.png`, and the four `OPS_AU37*.kzb` files) are stock P0916 files included so the installer can cleanly upgrade units that previously ran v1.0 / v1.1 and restore all 20 files whenever `RESTORE` is run.
 
-## Compatibility and troubleshooting
+See [CHANGELOG.md](CHANGELOG.md#english) for version history and [docs/VALIDATION.md](docs/VALIDATION.md#english) for offline test notes.
 
-- Firmware must be `MHI2_CN_AU37x_P0916`, M.I.B. must be 3.7.3, and resource contents must match the manifest. Do not remove the version or hash checks to adapt this package to another unit.
-- `Target differs from all known versions`: an unknown resource difference was detected, so the script stops. Report the software version, error text and relevant resource hashes; do not publicly upload a full backup.
-- Missing `sha1sum`: check that `apps/sbin/sha1sum` is present and intact in your existing M.I.B. installation. This script does not require `cmp` or `rmdir`.
-- SD write errors: the script attempts to remount the SD card and checks actual writes. Inspect the failing command; a single message does not establish that the card is damaged.
-- For display problems, run `RESTORE` and restart. If the engineering menu is inaccessible, restoration through that menu is unavailable.
-- A detected replacement failure triggers an attempt to restore the current run's backup. Rollback cannot be guaranteed after power loss or forced termination. Replacing 20 files is not a single atomic transaction.
-
-## Validation and maintenance
-
-The [validation record](docs/VALIDATION.md#english) distinguishes eight offline simulation tests from the owner's vehicle feedback. The [changelog](CHANGELOG.md#english) describes version differences.
-
-Maintainers can use Python 3.9+ with no third-party dependencies:
+### Verification & Packaging (Maintainers)
+Requires Python 3.9+ (standard library only):
 
 ```bash
-python tools/verify.py
-python tools/build_release.py
+python tools/verify.py         # Verify manifest, LF line endings, and 43 SD_ROOT files
+python tools/build_release.py  # Build release ZIP and SHA-256 checksum in dist/
 ```
 
-The installation ZIP and its SHA-256 file are generated in `dist/`. Building does not modify the installer or resources. SHA-1 matches existing head-unit files; SHA-256 checks downloads. Checksums do not replace trust in the release source.
+---
 
-This repository contains only the required installation resources, scripts and documentation. It excludes full head-unit backups, VINs, password files, FEC data and runtime logs. Redact personal information before reporting issues.
+## Credits & License
 
-## Credits
+- **[mrfixpl / Audi-MHI2-RVC-fullscreen](https://github.com/mrfixpl/Audi-MHI2-RVC-fullscreen)**: Original fullscreen RVC concept and AU37x modifications.
+- **[M.I.B. (More Incredible Bash)](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash)**: Custom Script environment.
+- **[MIB Helper Wiki](https://wiki.mib-helper.com/index.php?title=Audi_MHI2_RVC_fullscreen_patch)**: Upstream documentation.
 
-- [mrfixpl / Audi-MHI2-RVC-fullscreen](https://github.com/mrfixpl/Audi-MHI2-RVC-fullscreen): original fullscreen approach and AU37x resource modifications.
-- [M.I.B. / More Incredible Bash](https://github.com/Mr-MIBonk/M.I.B._More-Incredible-Bash): Custom Script execution environment and checksum utility.
-- [MIB Helper Wiki](https://wiki.mib-helper.com/index.php?title=Audi_MHI2_RVC_fullscreen_patch): upstream project documentation.
+For personal, non-commercial use only—see [NOTICE.md](NOTICE.md#english). Always keep a backup before modifying your head unit.
